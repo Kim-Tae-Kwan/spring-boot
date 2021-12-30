@@ -3,7 +3,7 @@ version: '3'
 services:
     db:
         image: mariadb:latest
-        container_name: mariadb
+        container_name: security-db
         restart: always
         env_file:
             - ./db/.env
