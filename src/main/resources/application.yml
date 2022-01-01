@@ -1,8 +1,11 @@
+server:
+  port: 17549
+
 spring:
   datasource:
-    url: jdbc:mariadb://localhost:3306/security
+    url: jdbc:mariadb://localhost:13306/security
     username: root
-    password: voo12voo
+    password: 1234
     driver-class-name: org.mariadb.jdbc.Driver
 
   jpa:
@@ -10,5 +13,5 @@ spring:
     properties:
       hibernate.format_sql: true
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
 
