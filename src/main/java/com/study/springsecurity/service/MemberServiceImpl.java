@@ -6,18 +6,40 @@ import com.study.springsecurity.repository.MemberRepository;
 import com.study.springsecurity.repository.RoleRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 @Log4j2
 @Transactional
 @AllArgsConstructor
 @Service
-public class MemberServiceImpl implements MemberService{
+public class MemberServiceImpl implements MemberService, UserDetailsService {
     private final MemberRepository memberRepository;
     private final RoleRepository roleRepository;
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        Member member = memberRepository.findByEmail(username);
+        if(member == null){
+            throw  new UsernameNotFoundException("User not found");
+        }
+
+        Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
+        member.getRoles().forEach(role -> {
+            authorities.add(new SimpleGrantedAuthority(role.getName()));
+        });
+
+        return new User(member.getName(), member.getPassword(), authorities);
+    }
 
     @Override
     public Member saveMember(Member member) {
