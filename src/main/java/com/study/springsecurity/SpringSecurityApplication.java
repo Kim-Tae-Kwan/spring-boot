@@ -20,6 +20,11 @@ public class SpringSecurityApplication {
     }
 
     @Bean
+    public PasswordEncoder passwordEncoder(){
+        return new BCryptPasswordEncoder();
+    }
+
+    @Bean
     public CommandLineRunner run(MemberService memberService){
         return args -> {
             memberService.saveRole(new Role(null, "USER"));
