@@ -11,6 +11,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,6 +26,7 @@ import java.util.List;
 public class MemberServiceImpl implements MemberService, UserDetailsService {
     private final MemberRepository memberRepository;
     private final RoleRepository roleRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -38,12 +40,13 @@ public class MemberServiceImpl implements MemberService, UserDetailsService {
             authorities.add(new SimpleGrantedAuthority(role.getName()));
         });
 
-        return new User(member.getName(), member.getPassword(), authorities);
+        return new User(member.getEmail(), member.getPassword(), authorities);
     }
 
     @Override
     public Member saveMember(Member member) {
         log.info("Saving new {} to the database", member.getName());
+        member.setPassword(passwordEncoder.encode(member.getPassword()));
         return memberRepository.save(member);
     }
 
