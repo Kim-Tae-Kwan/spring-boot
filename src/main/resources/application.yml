@@ -3,7 +3,7 @@ server:
 
 spring:
   datasource:
-    url: jdbc:mariadb://localhost:13306/security
+    url: jdbc:mariadb://localhost:23306/security
     username: root
     password: 1234
     driver-class-name: org.mariadb.jdbc.Driver
@@ -13,5 +13,5 @@ spring:
     properties:
       hibernate.format_sql: true
     hibernate:
-      ddl-auto: create
+      ddl-auto: none
 
