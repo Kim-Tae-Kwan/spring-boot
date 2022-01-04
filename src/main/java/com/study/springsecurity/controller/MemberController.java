@@ -74,7 +74,7 @@ public class MemberController {
                 JWTVerifier verifier = JWT.require(algorithm).build();
                 DecodedJWT decodedJWT = verifier.verify(refresh_token);
                 String username = decodedJWT.getSubject();
-                Member member = memberService.getMember(username);
+                Member member = memberService.findByEmail(username);
                 String access_token = JWT.create()
                         .withSubject(member.getEmail())
                         .withExpiresAt(new Date(System.currentTimeMillis() + 10 * 60 * 1000))
