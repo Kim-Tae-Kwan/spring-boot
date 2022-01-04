@@ -1,4 +1,4 @@
-package com.study.springsecurity.security;
+package com.study.springsecurity.security.service;
 
 import com.study.springsecurity.model.entity.Member;
 import com.study.springsecurity.repository.MemberRepository;
