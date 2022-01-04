@@ -46,7 +46,7 @@ public class MemberService {
         member.getRoles().add(role);
     }
 
-    public Member getMember(String email) {
+    public Member findByEmail(String email) {
         log.info("Fetching member {}", email);
         return memberRepository.findByEmail(email);
     }
