@@ -1,14 +1,14 @@
-package com.study.springsecurity.controller;
+package com.study.springsecurity.rest.controller;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.study.springsecurity.model.dto.roleAddRequestDto;
-import com.study.springsecurity.model.entity.Member;
-import com.study.springsecurity.model.entity.Role;
-import com.study.springsecurity.service.MemberService;
+import com.study.springsecurity.rest.model.dto.roleAddRequestDto;
+import com.study.springsecurity.rest.model.entity.Member;
+import com.study.springsecurity.rest.model.entity.Role;
+import com.study.springsecurity.rest.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;

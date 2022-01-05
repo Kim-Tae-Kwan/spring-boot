@@ -1,9 +1,9 @@
-package com.study.springsecurity.service;
+package com.study.springsecurity.rest.service;
 
-import com.study.springsecurity.model.entity.Member;
-import com.study.springsecurity.model.entity.Role;
-import com.study.springsecurity.repository.MemberRepository;
-import com.study.springsecurity.repository.RoleRepository;
+import com.study.springsecurity.rest.model.entity.Member;
+import com.study.springsecurity.rest.model.entity.Role;
+import com.study.springsecurity.rest.repository.MemberRepository;
+import com.study.springsecurity.rest.repository.RoleRepository;
 import com.study.springsecurity.security.model.LoginRequestDto;
 import com.study.springsecurity.security.model.LoginResponseDto;
 import com.study.springsecurity.security.model.SignupRequestDto;

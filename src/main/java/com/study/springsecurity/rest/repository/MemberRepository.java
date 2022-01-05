@@ -1,6 +1,6 @@
-package com.study.springsecurity.repository;
+package com.study.springsecurity.rest.repository;
 
-import com.study.springsecurity.model.entity.Member;
+import com.study.springsecurity.rest.model.entity.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface MemberRepository extends JpaRepository<Member, Long> {

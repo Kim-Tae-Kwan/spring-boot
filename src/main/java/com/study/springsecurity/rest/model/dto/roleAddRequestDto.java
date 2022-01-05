@@ -1,4 +1,4 @@
-package com.study.springsecurity.model.dto;
+package com.study.springsecurity.rest.model.dto;
 
 import lombok.Data;
 

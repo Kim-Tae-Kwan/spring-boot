@@ -1,7 +1,7 @@
 package com.study.springsecurity.security.service;
 
-import com.study.springsecurity.model.entity.Member;
-import com.study.springsecurity.repository.MemberRepository;
+import com.study.springsecurity.rest.model.entity.Member;
+import com.study.springsecurity.rest.repository.MemberRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
