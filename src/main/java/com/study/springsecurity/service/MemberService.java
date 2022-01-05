@@ -4,20 +4,18 @@ import com.study.springsecurity.model.entity.Member;
 import com.study.springsecurity.model.entity.Role;
 import com.study.springsecurity.repository.MemberRepository;
 import com.study.springsecurity.repository.RoleRepository;
+import com.study.springsecurity.security.model.LoginRequestDto;
+import com.study.springsecurity.security.model.LoginResponseDto;
+import com.study.springsecurity.security.model.SignupRequestDto;
+import com.study.springsecurity.security.utils.JwtProvider;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Log4j2
 @Transactional
@@ -27,6 +25,17 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtProvider jwtProvider;
+
+    public List<Member> findAll() {
+        log.info("Fetching members");
+        return memberRepository.findAll();
+    }
+
+    public Member findByEmail(String email) {
+        log.info("Fetching member {}", email);
+        return memberRepository.findByEmail(email);
+    }
 
     public Member saveMember(Member member) {
         log.info("Saving new {} to the database", member.getName());
@@ -46,13 +55,32 @@ public class MemberService {
         member.getRoles().add(role);
     }
 
-    public Member findByEmail(String email) {
-        log.info("Fetching member {}", email);
-        return memberRepository.findByEmail(email);
+    public LoginResponseDto login(LoginRequestDto request) throws NoSuchElementException{
+        Member member = memberRepository.findByEmail(request.getEmail());
+        if(!passwordEncoder.matches(request.getPassword(), member.getPassword())){
+            throw new NoSuchElementException();
+        }
+
+        //토큰 생성
+        String accessToken = jwtProvider.createAccessToken(member.getEmail(), member.getRoles());
+        String refreshToken = jwtProvider.createRefreshToken(member.getEmail());
+
+        return LoginResponseDto.builder()
+                    .accessToken(accessToken)
+                    .refreshToken(refreshToken)
+                    .build();
     }
 
-    public List<Member> getMembers() {
-        log.info("Fetching members");
-        return memberRepository.findAll();
+    public Member singUp(SignupRequestDto request){
+        Member member = Member.builder()
+                .name(request.getName())
+                .email(request.getEmail())
+                .password(passwordEncoder.encode(request.getPassword()))
+                .build();
+
+        Role role = roleRepository.findByName("USER");
+        member.getRoles().add(role);
+
+        return memberRepository.save(member);
     }
 }

@@ -1,7 +1,14 @@
 package com.study.springsecurity;
 
+import com.study.springsecurity.model.entity.Member;
+import com.study.springsecurity.model.entity.Role;
+import com.study.springsecurity.service.MemberService;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
+
+import java.util.ArrayList;
 
 @SpringBootApplication
 public class SpringSecurityApplication {
