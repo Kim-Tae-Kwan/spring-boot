@@ -27,6 +27,15 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
+    public List<Member> findAll() {
+        log.info("Fetching members");
+        return memberRepository.findAll();
+    }
+
+    public Member findByEmail(String email) {
+        log.info("Fetching member {}", email);
+        return memberRepository.findByEmail(email);
+    }
 
     public Member saveMember(Member member) {
         log.info("Saving new {} to the database", member.getName());
@@ -46,13 +55,7 @@ public class MemberService {
         member.getRoles().add(role);
     }
 
-    public Member findByEmail(String email) {
-        log.info("Fetching member {}", email);
-        return memberRepository.findByEmail(email);
     }
 
-    public List<Member> getMembers() {
-        log.info("Fetching members");
-        return memberRepository.findAll();
     }
 }
