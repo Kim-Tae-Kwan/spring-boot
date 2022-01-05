@@ -23,5 +23,6 @@ public class Member {
     private String password;
 
     @ManyToMany(fetch = FetchType.EAGER)
+    @Builder.Default
     private List<Role> roles = new ArrayList<>();
 }
