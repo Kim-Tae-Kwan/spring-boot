@@ -6,6 +6,9 @@ import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import lombok.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -19,30 +22,47 @@ import java.util.Base64;
 import java.util.Date;
 import java.util.List;
 
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Component
 public class JwtProvider {
-    //@Value("spring.jwt.secret")
-    private String secretKey = "vazil.vridge";
-
-    private long tokenValidMilliSecond = 1000L * 60 * 60; // 1시간만 토큰 유효
-
+//    @Value("spring.jwt.secret")
+    private String secretKey;
+    private long accessTokenValidMilliSecond;
+    private long refreshTokenValidMilliSecond;
     private final UserDetailsService userDetailsService;
 
     @PostConstruct //초기화 작업을 위해 실행하는 메소드
     protected void init() {
-        secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
+        String temp = "vazil.vtalk";
+        secretKey = Base64.getEncoder().encodeToString(temp.getBytes());
+        accessTokenValidMilliSecond = 1000L * 60 * 10; // 10분 토큰 유효
+        refreshTokenValidMilliSecond = 1000L * 60 * 30; // 30분 토큰 유효
     }
 
     // Jwt 토큰 생성
-    public String createToken(String userName, List<Role> roles) {
+    public String createAccessToken(String userName, List<Role> roles) {
+        return this.createToken(userName, roles);
+    }
+
+    // Jwt 토큰 생성
+    public String createRefreshToken(String userName) {
+        return this.createToken(userName, null);
+    }
+
+    // Jwt 토큰 생성
+    private String createToken(String userName, List<Role> roles) {
         Claims claims = Jwts.claims().setSubject(userName);
-        claims.put("roles", roles);
+        long expireTime = this.accessTokenValidMilliSecond;
+        if (roles != null){
+            claims.put("roles", roles);
+            expireTime = this.refreshTokenValidMilliSecond;
+        }
         Date now = new Date();
+
         return Jwts.builder()
                 .setClaims(claims) // 데이터
                 .setIssuedAt(now) // 토큰 발행일자
-                .setExpiration(new Date(now.getTime() + tokenValidMilliSecond)) // set Expire Time
+                .setExpiration(new Date(now.getTime() + expireTime)) // set Expire Time
                 .signWith(SignatureAlgorithm.HS256, secretKey) // 암호화 알고리즘, secret값 세팅
                 .compact();
     }
@@ -59,8 +79,8 @@ public class JwtProvider {
     }
 
     // Request의 Header에서 token 파싱 : "Authorization: jwt토큰"
-    public String resolveToken(HttpServletRequest req) {
-        return StringUtils.isEmpty(req.getHeader("Authorization")) ? "" : req.getHeader("Authorization").substring(7);
+    public String resolveToken(HttpServletRequest request) {
+        return request.getHeader("Authorization") == null ? "" : request.getHeader("Authorization").substring(7);
     }
 
     // Jwt 토큰의 유효성 + 만료일자 확인

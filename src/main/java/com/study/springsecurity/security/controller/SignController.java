@@ -3,6 +3,7 @@ package com.study.springsecurity.security.controller;
 import com.study.springsecurity.model.entity.Member;
 import com.study.springsecurity.security.model.LoginRequestDto;
 import com.study.springsecurity.security.model.LoginResponseDto;
+import com.study.springsecurity.security.model.SignupRequestDto;
 import com.study.springsecurity.security.utils.JwtProvider;
 import com.study.springsecurity.service.MemberService;
 import lombok.AllArgsConstructor;
@@ -14,24 +15,27 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.NoSuchElementException;
+import java.util.UUID;
+
 @AllArgsConstructor
-//@RequestMapping
 @RestController
 public class SignController {
     private final MemberService memberService;
-    private final PasswordEncoder passwordEncoder;
-    private final JwtProvider jwtProvider;
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequestDto request){
-        Member member = memberService.findByEmail(request.getEmail());
-        if(!passwordEncoder.matches(request.getPassword(), member.getPassword())){
-            return new ResponseEntity<>(null, HttpStatus.FORBIDDEN);
+        try{
+            LoginResponseDto response = memberService.login(request);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }catch (NoSuchElementException exception){
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
-
-        //토큰 생성
-        String token = jwtProvider.createToken(member.getEmail(), member.getRoles());
-        return new ResponseEntity<>(LoginResponseDto.builder().accessToken(token).refreshToken("").build(),HttpStatus.OK);
     }
 
+    @PostMapping("/signup")
+    public ResponseEntity<Member> signup(@RequestBody SignupRequestDto request){
+        Member member = memberService.singUp(request);
+        return new ResponseEntity<>(member,HttpStatus.CREATED);
+    }
 }
