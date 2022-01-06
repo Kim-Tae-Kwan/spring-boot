@@ -1,4 +1,4 @@
-package com.study.redis;
+package com.study.redis.config;
 
 import lombok.AllArgsConstructor;
 import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
