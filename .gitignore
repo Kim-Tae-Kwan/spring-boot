@@ -37,4 +37,4 @@ out/
 .vscode/
 
 ### maria DB ###
-/db/data/
+/security/db/data/
