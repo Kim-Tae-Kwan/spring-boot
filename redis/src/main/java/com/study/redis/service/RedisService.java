@@ -17,7 +17,7 @@ public class RedisService {
     }
 
     public void save(RedisDao redisDao){
-        redisDao.setExpireTime(10L);
+        redisDao.setTimeout(10L);
         repository.save(redisDao);
     }
 

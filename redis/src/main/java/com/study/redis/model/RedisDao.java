@@ -17,5 +17,5 @@ public class RedisDao {
     private String id;
     private String token;
     @TimeToLive
-    private Long expireTime;
+    private Long timeout;
 }
