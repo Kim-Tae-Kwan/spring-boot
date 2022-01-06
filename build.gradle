@@ -1,49 +1,54 @@
-plugins {
-    id 'org.springframework.boot' version '2.6.2'
-    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
-    id 'java'
-}
+buildscript {
+    ext {
+        springBootVersion = '2.1.4.RELEASE'
+    }
+    repositories {
+        mavenCentral()
+    }
 
-group = 'com.study'
-version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '11'
-
-configurations {
-    compileOnly {
-        extendsFrom annotationProcessor
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+        classpath "io.spring.gradle:dependency-management-plugin:0.6.0.RELEASE"
     }
 }
 
-repositories {
-    mavenCentral()
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'org.springframework.boot'
+    apply plugin: 'io.spring.dependency-management'
+
+    sourceCompatibility = 1.8
+
+    repositories {
+        mavenCentral()
+    }
+
+    configurations {
+        compileOnly {
+            extendsFrom annotationProcessor
+        }
+    }
+
+    // 모든 모듈에서 사용하는 라이브러리
+    dependencies {
+        //Spring Web
+        implementation 'org.springframework.boot:spring-boot-starter-web'
+
+        //DEV
+        compileOnly 'org.projectlombok:lombok'
+
+        //Database
+        runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
+        annotationProcessor 'org.projectlombok:lombok'
+
+        //Test
+        testImplementation 'org.springframework.boot:spring-boot-starter-test'
+        testImplementation 'org.springframework.security:spring-security-test'
+    }
 }
 
-dependencies {
-    //JPA
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-
-    //Security
-    implementation 'org.springframework.boot:spring-boot-starter-security'
-    implementation 'io.jsonwebtoken:jjwt:0.9.1'
-    
-    //Spring Web
-    implementation 'org.springframework.boot:spring-boot-starter-web'
-
-    implementation group: 'com.auth0', name: 'java-jwt', version: '3.18.2'
-
-    //DEV
-    compileOnly 'org.projectlombok:lombok'
-    developmentOnly 'org.springframework.boot:spring-boot-devtools'
-
-    //Database
-    runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
-    annotationProcessor 'org.projectlombok:lombok'
-
-    //Test
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testImplementation 'org.springframework.security:spring-security-test'
-}
-
-test {
-    useJUnitPlatform()
-}
+//project(':security') {
+//    dependencies {
+//        compile project(':module-common')
+//    }
+//}
