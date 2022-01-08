@@ -26,6 +26,11 @@ public class MemberService {
         return memberRepository.findAll();
     }
 
+    public List<Role> findAllRole() {
+        log.info("Fetching roles");
+        return roleRepository.findAll();
+    }
+
     public Member findByEmail(String email) {
         log.info("Fetching member {}", email);
         return memberRepository.findByEmail(email);
