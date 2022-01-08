@@ -62,7 +62,7 @@ public class SignServiceImp implements SignService {
     public void logout(LogoutRequestDto request) {
         String accessToken = request.getAccessToken();
         if(!jwtProvider.validateToken(accessToken)){
-            throw new LogoutException("access 토큰이 유효하지 않습니다.");
+            return;
         }
 
         String email = jwtProvider.getAuthentication(accessToken).getName();
