@@ -1,5 +1,6 @@
 package com.study.springsecurity.filter;
 
+import com.study.springsecurity.redis.RedisDao;
 import com.study.springsecurity.redis.RedisRepository;
 import com.study.springsecurity.utils.JwtProvider;
 import lombok.AllArgsConstructor;
@@ -24,7 +25,7 @@ public class JwtAuthorizationFilter extends GenericFilterBean {
         String token = jwtProvider.resolveToken((HttpServletRequest) request);
         if(token != null && jwtProvider.validateToken(token)){
             String email = jwtProvider.getAuthentication(token).getName();
-            if(redisRepository.findById("logout " + email) == null){
+            if(!redisRepository.existsById("logout " + email)){
                 Authentication auth = jwtProvider.getAuthentication(token);
                 SecurityContextHolder.getContext().setAuthentication(auth);
             }
