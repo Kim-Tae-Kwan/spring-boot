@@ -1,0 +1,20 @@
+version: '3'
+
+services:
+    db:
+        image: mariadb:latest
+        container_name: security-db
+        restart: always
+        env_file:
+            - ./db/.env
+        ports:
+            - 23306:3306
+        volumes:
+            - ./db/data:/var/lib/mysql
+
+    redis:
+        image: redis:latest
+        container_name: redis
+        restart: always
+        ports:
+            - 6379:6379
