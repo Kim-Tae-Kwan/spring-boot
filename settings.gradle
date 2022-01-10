@@ -1,4 +1,6 @@
 rootProject.name = 'spring-boot'
 include 'security'
 include 'redis'
+include 'Exception'
+findProject(':Exception')?.name = 'exception'
 
