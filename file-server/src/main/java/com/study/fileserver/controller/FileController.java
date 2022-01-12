@@ -18,13 +18,13 @@ import java.util.List;
 public class FileController {
     private final FileService fileService;
 
-    @GetMapping("/downloadFile/{fileName}")
-    public ResponseEntity<Resource> download(@PathVariable String fileName, HttpServletRequest request) {
+    @GetMapping("/download/{fileName}")
+    public ResponseEntity<Resource> download(@PathVariable String fileName) {
         return fileService.loadFile(fileName);
     }
 
     @PostMapping("/upload")
-    public ResponseEntity<List<UploadFileResponse>> upload(@RequestParam("files") MultipartFile[] files) {
+    public ResponseEntity<List<UploadFileResponse>> upload(@RequestPart("files") MultipartFile[] files) {
         List<UploadFileResponse> responses = fileService.saveFiles(files);
         return ResponseEntity.ok()
                 .body(responses);
