@@ -29,12 +29,12 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @Service
 public class FileService {
-    private final Path fileRootDirectory;
+    private final Path path;
 
     @PostConstruct
     public void init() {
         try {
-            Files.createDirectories(this.fileRootDirectory);
+            Files.createDirectories(this.path);
         } catch (Exception ex) {
             throw new FileStorageException("Could not create the directory where the uploaded files will be stored.", ex);
         }
@@ -47,7 +47,7 @@ public class FileService {
                 .collect(Collectors.toList());
     }
 
-    public UploadFileResponse save(MultipartFile file){
+    private UploadFileResponse save(MultipartFile file){
         String fileName = StringUtils.cleanPath(file.getOriginalFilename());
 
         try {
@@ -57,7 +57,7 @@ public class FileService {
             }
 
             // Copy file to the target location (Replacing existing file with the same name)
-            Path targetLocation = this.fileRootDirectory.resolve(fileName);
+            Path targetLocation = this.path.resolve(fileName);
             Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
 
             String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
@@ -65,8 +65,13 @@ public class FileService {
                     .path(fileName)
                     .toUriString();
 
-            return new UploadFileResponse(fileName, fileDownloadUri,
-                    file.getContentType(), file.getSize());
+            return UploadFileResponse.builder()
+                    .fileName(fileName)
+                    .fileDownloadUri(fileDownloadUri)
+                    .fileType(file.getContentType())
+                    .size(file.getSize())
+                    .build();
+
         } catch (IOException ex) {
             throw new FileStorageException("Could not store file " + fileName + ". Please try again!", ex);
         }
@@ -74,7 +79,7 @@ public class FileService {
 
     public ResponseEntity<Resource> loadFile(String fileName) {
         try {
-            Path filePath = this.fileRootDirectory.resolve(fileName).normalize();
+            Path filePath = this.path.resolve(fileName).normalize();
             Resource resource = new UrlResource(filePath.toUri());
 
             if(!resource.exists()) {
@@ -86,6 +91,7 @@ public class FileService {
                     .contentType(MediaType.parseMediaType(contentType))
                     .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
                     .body(resource);
+
         } catch (MalformedURLException exception) {
             throw new MyFileNotFoundException("File not found " + fileName, exception);
         }
