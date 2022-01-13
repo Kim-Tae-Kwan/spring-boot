@@ -5,6 +5,7 @@ import com.study.fileserver.exception.MyFileNotFoundException;
 import com.study.fileserver.model.UploadFileResponse;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import net.coobird.thumbnailator.Thumbnailator;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
@@ -16,6 +17,8 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.annotation.PostConstruct;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
@@ -60,8 +63,14 @@ public class FileService {
             Path targetLocation = this.path.resolve(fileName);
             Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
 
+            if (this.checkImageType(file)){
+                Path thumbnailPath = this.path.resolve("thumb_" + fileName);
+                FileOutputStream thumbnail = new FileOutputStream(new File(thumbnailPath.toString()));
+                Thumbnailator.createThumbnail(file.getInputStream(), thumbnail, 100, 100);
+            }
+
             String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
-                    .path("/download/")
+                    .path("file/download/")
                     .path(fileName)
                     .toUriString();
 
@@ -75,6 +84,11 @@ public class FileService {
         } catch (IOException ex) {
             throw new FileStorageException("Could not store file " + fileName + ". Please try again!", ex);
         }
+    }
+
+    private boolean checkImageType(MultipartFile file){
+        String contentType = file.getContentType();
+        return contentType.startsWith("image");
     }
 
     public ResponseEntity<Resource> loadFile(String fileName) {

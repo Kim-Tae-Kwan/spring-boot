@@ -21,6 +21,11 @@ public class FileController {
         return fileService.loadFile(fileName);
     }
 
+    @GetMapping("/download/{fileName}/thumbnail")
+    public ResponseEntity<Resource> downloadThumbnail(@PathVariable String fileName) {
+        return fileService.loadFile("thumb_" + fileName);
+    }
+
     @PostMapping("/upload")
     public ResponseEntity<List<UploadFileResponse>> upload(@RequestPart("files") MultipartFile[] files) {
         List<UploadFileResponse> responses = fileService.saveFiles(files);
