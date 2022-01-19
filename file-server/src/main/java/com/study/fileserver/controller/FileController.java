@@ -16,17 +16,17 @@ import java.util.List;
 public class FileController {
     private final FileService fileService;
 
-    @GetMapping("/download/{fileName}")
+    @GetMapping("/{fileName}")
     public ResponseEntity<Resource> download(@PathVariable String fileName) {
         return fileService.loadFile(fileName);
     }
 
-    @GetMapping("/download/{fileName}/thumbnail")
+    @GetMapping("/{fileName}/thumbnail")
     public ResponseEntity<Resource> downloadThumbnail(@PathVariable String fileName) {
         return fileService.loadFile("thumb_" + fileName);
     }
 
-    @PostMapping("/upload")
+    @PostMapping
     public ResponseEntity<List<UploadFileResponse>> upload(@RequestPart("files") MultipartFile[] files) {
         List<UploadFileResponse> responses = fileService.saveFiles(files);
         return ResponseEntity.ok()
